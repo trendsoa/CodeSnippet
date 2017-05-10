@@ -1,0 +1,18 @@
+spring读取cookie方法
+    String xxx = WebUtils.getCookie((HttpServletRequest) servletRequest,"your-cookie-name").getValue();
+
+===============
+
+servlet的requestbody以及response的body一旦流被读取了，就无法再次消费了，因此这对于有要拦截请求，记录相关信息的时候，带来一个潜在的坑。那么如何处理这个呢，利用filter，wrapper一层，然后proceed，最后response完之后在把cached的body设置回原始响应。
+
+ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper(request);
+ContentCachingResponseWrapper wrappedResponse = new ContentCachingResponseWrapper(response);
+
+spring提供了ContentCachingRequestWrapper以及ContentCachingResponseWrapper两个类，来解决这类问题。
+读取完body之后
+wrappedResponse.copyBodyToResponse();
+
+================
+hystrix.stream 相关异常
+hystrix.config.stream.maxConcurrentConnections: 50
+
